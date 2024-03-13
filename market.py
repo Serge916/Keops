@@ -1,25 +1,14 @@
 from agents import *
+from day import *
+
 
 # Simulation parameters
 DAYS = 3
 
+class MarketSimulator():
 
-def interact(buyer: Agent, seller: Agent) -> None:
-    if buyer.strategy == NEGOTIATE:
+    def __init__(self, numDays:int = 1, agents:list[Agent] = None, default_mode:int = WALKBY,  numBuyers:int = 0, numSellers:int = 0) -> None:
         pass
-    if buyer.strategy == WALKBY:
-        seller.attended = True
-        buyer.attended = True
-        if seller.currentPrice <= buyer.priceLimit:
-            print("Agents agreed on a price!")
-            seller.streak += 1
-            seller.success = True
-            buyer.success = True
-
-        else:
-            print("Agents couldn't agree on a price")
-            seller.streak -= 1
-
 
 groupBuyers = [Agent(BUYER, WALKBY, 9, 7)]
 groupSellers = [Agent(SELLER, WALKBY, 6, 6)]
@@ -34,4 +23,4 @@ for day in range(DAYS):
         while seller.attended == True:
             seller = random.choice(groupSellers)
 
-        interact(buyer, seller)
+        runDay(buyer, seller)
