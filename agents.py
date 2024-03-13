@@ -1,12 +1,4 @@
-import random
-
-# Agent type
-SELLER = 0
-BUYER = 1
-BOTH = 2
-# Agent strategy
-WALKBY = 0
-NEGOTIATE = 1
+from constants import *
 
 
 class Agent:
@@ -15,24 +7,28 @@ class Agent:
     Args:
         type (int): The type of the agent: BUYER/SELLER
         strategy (int): The strategy of the agent
-        priceLimit (int): The max (buyer) or min (seller) price the agent is willing to acccept
-        initialPrice (int): The initial value for currentPrice
+        priceLimit (float): The max (buyer) or min (seller) price the agent is willing to acccept
+        initialPrice (float): The initial value for goalPrice
     Internal variables:
-        currentPrice (int): The price the agent asks for in the current iteration
+        goalPrice (float): The price the agent asks for in the current iteration
+        lastAgreedPrice (float): The price agreed by the agent in the last meeting
         streak (int): The number of successful (positive) or failed (negative) days in a row
         attended (bool): True if the agent already participated in the current day, False otherwise
         success (bool): True if the agent successfully attended a meeting in the current day, False otherwise
     """
 
     def __init__(
-        self, agentType, strategy=WALKBY, priceLimit=None, initialPrice=None
+        self,
+        agentType: int,
+        strategy: int = WALKBY,
+        priceLimit: float = None,
+        initialPrice: float = None,
     ) -> None:
         self.type = agentType
         self.strategy = strategy
         self.priceLimit = priceLimit
-        self.currentPrice = initialPrice
-        print(f"Created agent of type {self.type}")
-
+        self.goalPrice = initialPrice
+        self.lastAgreedPrice = 0
         self.streak = 0
         self.attended = False
         self.discarded = False
@@ -40,4 +36,14 @@ class Agent:
 
     def reflection(self) -> None:
         """Agent reflects on the last round"""
-        pass
+        # previousGoalPrice + streakMultiplier * (agreedPrice - previousGoalPrice)
+        # TO DO: Deal with buyer negative streak. Is it even possible without being discarded?
+        goalPrice = (1 - ALPHA) * self.goalPrice + ALPHA * abs(self.streak) * (
+            self.lastAgreedPrice - self.goalPrice
+        )
+        # Prices cannot go out of bounds
+        self.goalPrice = (
+            max(goalPrice, self.priceLimit)
+            if self.type == BUYER
+            else min(goalPrice, self.priceLimit)
+        )
