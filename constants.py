@@ -1,0 +1,9 @@
+# Agent type
+SELLER = 0
+BUYER = 1
+BOTH = 2
+# Agent strategy
+WALKBY = 0
+NEGOTIATE = 1
+# Exponential smoothing
+ALPHA = 0.02
