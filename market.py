@@ -28,23 +28,30 @@ class MarketSimulator():
         else:
             self.agents = agents
 
-    def generateAgents(numBuyers:int, numSellers:int, strategy:int ) -> list[Agent]:
+    def generateAgents(self, numBuyers:int, numSellers:int, strategy:int) -> list[Agent]:
         """Function to generate a given number of buyers and sellers. Returns a list of agents"""
         agents = []
 
         for _ in range(numBuyers):
-            # TODO: review how to randomly generate price limits 
+            # TODO: review how to randomly generate price limits This is a mock up for the moment!
             priceLimit = random(50, 100)
             initialPrice = random(priceLimit, 100)
 
-            agents.append(Agent(BUYER, strategy,priceLimit,initialPrice))
+            agents.append(Agent(BUYER, strategy, priceLimit, initialPrice))
 
         for _ in range(numSellers):
             # TODO: review how to randomly generate price limits 
             priceLimit = random(50, 100)
             initialPrice = random(priceLimit, 100)
 
-            agents.append(Agent(SELLER, strategy,priceLimit,initialPrice))
+            agents.append(Agent(SELLER, strategy, priceLimit, initialPrice))
+        
+        return agents
+    
+    def insertAgent(self, newAgent:Agent) -> None:
+        """Function to insert a new agent to the list of agents of the simulation"""
+        self.agents.append(newAgent)
+
 
 # TODO: Review!
 groupBuyers = [Agent(BUYER, WALKBY, 9, 7)]
