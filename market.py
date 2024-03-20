@@ -1,11 +1,18 @@
-from random import random
+from random import random, randrange
 import logging
+from datetime import datetime
+import time
 
 from agents import *
 from day import *
 
 log = logging.getLogger(__name__)
-logging.basicConfig(filename="simulator.log", filemode="a", level=logging.DEBUG)
+logging.basicConfig(
+    filename="simulator.log",
+    filemode="a",
+    level=logging.DEBUG,
+    format="[%(levelname)s] %(name)s-%(funcName)s(): %(message)s",
+)
 
 
 class MarketSimulator:
@@ -30,6 +37,7 @@ class MarketSimulator:
         numSellers: int = 0,
     ) -> None:
         self.numDays = numDays
+        log.debug(f"choden days: {numDays}")
 
         if agents is None:
             self.agents = self.generateAgents(numBuyers, numSellers, defaultStrategy)
@@ -38,6 +46,7 @@ class MarketSimulator:
 
         self.daysSimulated = 0
         self.days = []
+        self.simExecutionTime = 0
 
     def generateAgents(
         self, numBuyers: int = 0, numSellers: int = 0, strategy: int = WALKBY
@@ -47,16 +56,15 @@ class MarketSimulator:
 
         for _ in range(numBuyers):
             # TODO: review how to randomly generate price limits This is a mock up for the moment!
-            priceLimit = random(50, 100)
-            initialPrice = random(priceLimit, 100)
+            priceLimit = randrange(50, 100)
+            initialPrice = randrange(priceLimit, 100)
 
             agents.append(Agent(BUYER, strategy, priceLimit, initialPrice))
 
         for _ in range(numSellers):
             # TODO: review how to randomly generate price limits
-            priceLimit = random(50, 100)
-            initialPrice = random(priceLimit, 100)
-            log.debu
+            priceLimit = randrange(50, 100)
+            initialPrice = randrange(priceLimit, 100)
             agents.append(Agent(SELLER, strategy, priceLimit, initialPrice))
 
         return agents
@@ -67,6 +75,7 @@ class MarketSimulator:
 
     def simulate(self, days: int = None):
         """Execute the simulation for a given number of days"""
+        t0 = time.time()
         if days is None:
             days = self.numDays
 
@@ -76,6 +85,10 @@ class MarketSimulator:
             currentDay.getStats()
             self.daysSimulated += 1
             self.days.append(currentDay)
+
+        # End of the simulation. Get the timestamp to added the simulation time to the class
+        t1 = time.time()
+        self.simExecutionTime += t0 - t1
 
 
 # TODO: Review!
@@ -94,3 +107,24 @@ for day in range(DAYS):
 
         runDay(buyer, seller)
 """
+
+if __name__ == "__main__":
+    log.info(
+        f"""/****************** Starting a brand new simulation! ******************
+                            |
+                            |            Date of execution: {datetime.now()}                            
+                            |                      
+                            \\**********************************************************************
+
+"""
+    )
+    sim = MarketSimulator(numDays=10, defaultStrategy=WALKBY, numBuyers=1, numSellers=1)
+    log.info(
+        f"""/************************ End of simulation! ************************
+                            |
+                            |              Execution time: {sim.simExecutionTime}
+                            |
+                            \\**********************************************************************
+
+"""
+    )
