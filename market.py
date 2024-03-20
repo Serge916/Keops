@@ -29,14 +29,19 @@ class MarketSimulator:
         numBuyers: int = 0,
         numSellers: int = 0,
     ) -> None:
+        log.debug(
+            f"Creating class MarketSimulator with the following arguments numdays: {numDays}, agents: {agents}, defaultStrategy: {defaultStrategy}, numBuyers: {numBuyers}, numSellers: {numSellers}"
+        )
+
         self.numDays = numDays
-        log.debug(f"choden days: {numDays}")
 
         if agents is None:
+            log.debug("No agents provided so creating new ones.")
             self.agents = self.generateAgents(numBuyers, numSellers, defaultStrategy)
         else:
             self.agents = agents
 
+        log.debug("Reseted internal variables of MarketSimulator")
         self.daysSimulated = 0
         self.days = []
         self.simExecutionTime = 0
@@ -46,6 +51,10 @@ class MarketSimulator:
     ) -> list[Agent]:
         """Generate a given number of buyers and sellers. Returns a list of agents"""
         agents = []
+
+        log.debug(
+            f"Generating {numBuyers} buyers and {numSellers} with strategy {strategy}"
+        )
 
         for _ in range(numBuyers):
             # TODO: review how to randomly generate price limits This is a mock up for the moment!
@@ -64,6 +73,7 @@ class MarketSimulator:
 
     def insertAgent(self, newAgent: Agent) -> None:
         """Insert a new agent to the list of agents of the simulation"""
+        log.debug("Added agent to the list of agents of the simulation")
         self.agents.append(newAgent)
 
     def simulate(self, days: int = None):
@@ -72,9 +82,19 @@ class MarketSimulator:
         if days is None:
             days = self.numDays
 
-        for _ in range(days):
-            currentDay = Day(self.agents)
+        log.debug(
+            f"Starting a simulation of {days} days. Which will generate the days from {self.daysSimulated+1} to {self.daysSimulated+days}"
+        )
+
+        for iteratedDay in range(days):
+            log.debug(
+                f"Iteration Day: {iteratedDay}. Global day is: {self.daysSimulated+iteratedDay+1}"
+            )
+            currentDay = Day(self.agents, self.daysSimulated + iteratedDay)
+
             currentDay.execute()
+
+            log.debug("End of day, obtaining stats and appending the day")
             currentDay.getStats()
             self.daysSimulated += 1
             self.days.append(currentDay)
