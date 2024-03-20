@@ -3,8 +3,10 @@ SELLER = 0
 BUYER = 1
 BOTH = 2
 # Agent strategy
-WALKBY = 0
+STUBBORN = 0
 NEGOTIATE = 1
+# Maatching strategy
+RANDOM = 0
 # Exponential smoothing
 ALPHA = 0.02
 
@@ -25,3 +27,5 @@ END_MSG = """/************************ End of simulation! **********************
                             \\**********************************************************************
 
 """
+# Simulation parameters
+DAYS = 3
