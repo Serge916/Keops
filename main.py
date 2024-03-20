@@ -17,4 +17,7 @@ if __name__ == "__main__":
 
     sim = MarketSimulator(numDays=10, defaultStrategy=WALKBY, numBuyers=1, numSellers=1)
 
+    sim.simulate()
+    sim.simulate(2)
+
     log.info(END_MSG.format(sim.simExecutionTime))

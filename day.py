@@ -4,8 +4,13 @@ from round import *
 
 class Day:
     # TODO: Work on day!
-    pass
+    def __init__(self, agents, dayId):
+        self.agents = agents
+        self.dayId = dayId
 
+    def run(self):
+        # TODO: implement run
+        pass
 
-def runDay(buyer, seller):
-    runRound(buyer, seller)
+    def getStats(self):
+        pass

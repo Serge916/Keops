@@ -53,7 +53,7 @@ class MarketSimulator:
         agents = []
 
         log.debug(
-            f"Generating {numBuyers} buyers and {numSellers} with strategy {strategy}"
+            f"Generating {numBuyers} buyers and {numSellers} sellers with strategy {strategy}"
         )
 
         for _ in range(numBuyers):
@@ -92,7 +92,7 @@ class MarketSimulator:
             )
             currentDay = Day(self.agents, self.daysSimulated + iteratedDay)
 
-            currentDay.execute()
+            currentDay.run()
 
             log.debug("End of day, obtaining stats and appending the day")
             currentDay.getStats()
@@ -101,7 +101,7 @@ class MarketSimulator:
 
         # End of the simulation. Get the timestamp to added the simulation time to the class
         t1 = time.time()
-        self.simExecutionTime += t0 - t1
+        self.simExecutionTime += t1 - t0
 
 
 # TODO: Review!
