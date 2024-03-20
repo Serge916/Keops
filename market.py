@@ -1,13 +1,14 @@
 from random import random
+import logging
 
 from agents import *
 from day import *
 
+log = logging.getLogger(__name__)
+logging.basicConfig(filename="simulator.log", filemode="a", level=logging.DEBUG)
 
-# Simulation parameters
-DAYS = 3
 
-class MarketSimulator():
+class MarketSimulator:
     """Class that manages the whole simulation
 
     Args:
@@ -20,7 +21,14 @@ class MarketSimulator():
         TODO: Finish the docstring!
     """
 
-    def __init__(self, numDays:int = 1, agents:list[Agent] = None, defaultStrategy:int = WALKBY,  numBuyers:int = 0, numSellers:int = 0) -> None:
+    def __init__(
+        self,
+        numDays: int = 1,
+        agents: list[Agent] = None,
+        defaultStrategy: int = WALKBY,
+        numBuyers: int = 0,
+        numSellers: int = 0,
+    ) -> None:
         self.numDays = numDays
 
         if agents is None:
@@ -28,8 +36,13 @@ class MarketSimulator():
         else:
             self.agents = agents
 
-    def generateAgents(self, numBuyers:int, numSellers:int, strategy:int) -> list[Agent]:
-        """Function to generate a given number of buyers and sellers. Returns a list of agents"""
+        self.daysSimulated = 0
+        self.days = []
+
+    def generateAgents(
+        self, numBuyers: int = 0, numSellers: int = 0, strategy: int = WALKBY
+    ) -> list[Agent]:
+        """Generate a given number of buyers and sellers. Returns a list of agents"""
         agents = []
 
         for _ in range(numBuyers):
@@ -40,21 +53,33 @@ class MarketSimulator():
             agents.append(Agent(BUYER, strategy, priceLimit, initialPrice))
 
         for _ in range(numSellers):
-            # TODO: review how to randomly generate price limits 
+            # TODO: review how to randomly generate price limits
             priceLimit = random(50, 100)
             initialPrice = random(priceLimit, 100)
-
+            log.debu
             agents.append(Agent(SELLER, strategy, priceLimit, initialPrice))
-        
+
         return agents
-    
-    def insertAgent(self, newAgent:Agent) -> None:
-        """Function to insert a new agent to the list of agents of the simulation"""
+
+    def insertAgent(self, newAgent: Agent) -> None:
+        """Insert a new agent to the list of agents of the simulation"""
         self.agents.append(newAgent)
+
+    def simulate(self, days: int = None):
+        """Execute the simulation for a given number of days"""
+        if days is None:
+            days = self.numDays
+
+        for _ in range(days):
+            currentDay = Day(self.agents)
+            currentDay.execute()
+            currentDay.getStats()
+            self.daysSimulated += 1
+            self.days.append(currentDay)
 
 
 # TODO: Review!
-groupBuyers = [Agent(BUYER, WALKBY, 9, 7)]
+"""groupBuyers = [Agent(BUYER, WALKBY, 9, 7)]
 groupSellers = [Agent(SELLER, WALKBY, 6, 6)]
 
 for day in range(DAYS):
@@ -68,3 +93,4 @@ for day in range(DAYS):
             seller = random.choice(groupSellers)
 
         runDay(buyer, seller)
+"""
