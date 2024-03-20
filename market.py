@@ -7,7 +7,8 @@ from day import *
 # Simulation parameters
 DAYS = 3
 
-class MarketSimulator():
+
+class MarketSimulator:
     """Class that manages the whole simulation
 
     Args:
@@ -20,7 +21,14 @@ class MarketSimulator():
         TODO: Finish the docstring!
     """
 
-    def __init__(self, numDays:int = 1, agents:list[Agent] = None, defaultStrategy:int = WALKBY,  numBuyers:int = 0, numSellers:int = 0) -> None:
+    def __init__(
+        self,
+        numDays: int = 1,
+        agents: list[Agent] = None,
+        defaultStrategy: int = STUBBORN,
+        numBuyers: int = 0,
+        numSellers: int = 0,
+    ) -> None:
         self.numDays = numDays
 
         if agents is None:
@@ -28,27 +36,28 @@ class MarketSimulator():
         else:
             self.agents = agents
 
-    def generateAgents(numBuyers:int, numSellers:int, strategy:int ) -> list[Agent]:
+    def generateAgents(numBuyers: int, numSellers: int, strategy: int) -> list[Agent]:
         """Function to generate a given number of buyers and sellers. Returns a list of agents"""
         agents = []
 
         for _ in range(numBuyers):
-            # TODO: review how to randomly generate price limits 
+            # TODO: review how to randomly generate price limits
             priceLimit = random(50, 100)
             initialPrice = random(priceLimit, 100)
 
-            agents.append(Agent(BUYER, strategy,priceLimit,initialPrice))
+            agents.append(Agent(BUYER, strategy, priceLimit, initialPrice))
 
         for _ in range(numSellers):
-            # TODO: review how to randomly generate price limits 
+            # TODO: review how to randomly generate price limits
             priceLimit = random(50, 100)
             initialPrice = random(priceLimit, 100)
 
-            agents.append(Agent(SELLER, strategy,priceLimit,initialPrice))
+            agents.append(Agent(SELLER, strategy, priceLimit, initialPrice))
+
 
 # TODO: Review!
-groupBuyers = [Agent(BUYER, WALKBY, 9, 7)]
-groupSellers = [Agent(SELLER, WALKBY, 6, 6)]
+groupBuyers = [Agent(BUYER, STUBBORN, 9, 7)]
+groupSellers = [Agent(SELLER, STUBBORN, 6, 6)]
 
 for day in range(DAYS):
     for round in range(min(len(groupBuyers), len(groupSellers))):
