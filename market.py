@@ -25,7 +25,7 @@ class MarketSimulator:
         self,
         numDays: int = 1,
         agents: list[Agent] = None,
-        defaultStrategy: int = WALKBY,
+        defaultStrategy: int = STUBBORN,
         numBuyers: int = 0,
         numSellers: int = 0,
     ) -> None:
@@ -47,7 +47,7 @@ class MarketSimulator:
         self.simExecutionTime = 0
 
     def generateAgents(
-        self, numBuyers: int = 0, numSellers: int = 0, strategy: int = WALKBY
+        self, numBuyers: int = 0, numSellers: int = 0, strategy: int = STUBBORN
     ) -> list[Agent]:
         """Generate a given number of buyers and sellers. Returns a list of agents"""
         agents = []
