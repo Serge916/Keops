@@ -14,6 +14,7 @@ class Agent:
         - streak (int): The number of successful (positive) or failed (negative) days in a row
         - attended (bool): True if the agent already participated in the current day, False otherwise
         - success (bool): True if the agent successfully attended a meeting in the current day, False otherwise
+        - discarded (bool): True if the agent is not active anymore
     """
 
     def __init__(
