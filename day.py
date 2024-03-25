@@ -27,17 +27,27 @@ class Day:
 
         self.rounds = []
 
-    def run(self):
+    def run(self) -> None:
         while not self.__dayEnded():
             # The day has not ended so we create a new round
             currentRound = Round(self.pendingAgents)
 
-        pass
+            for i in self.pendingAgents:
+                if i.success:
+                    self.pendingAgents.remove(i)
+                    self.completedAgents.append(i)
 
-    def getStats(self):
+            # Another condition to stop the simulation if the number of rounds exceed the maxRounds
+            if currentRound.roundCount > self.maxRounds:
+                break
+
+    def getStats(self) -> None:
         # TODO: How should we do this?
+
         pass
 
-    def __dayEnded() -> bool:
-
-        return True
+    def __dayEnded(self) -> bool:
+        if not self.pendingAgents:
+            return False
+        else:
+            return True
