@@ -3,34 +3,51 @@ from round import *
 
 
 class Day:
-    # TODO: Work on day!
-    def __init__(self, agents: list[Agent], dayId: int):
-        self.agents = agents
+    """Class that manages the whole simulation
+
+    Args:
+        agents (list[Agent]): Array of agents that will take part on the day.
+        dayId (int): Number to identify the day.
+        maxRound (int): Maximum number of round a day might have.
+
+    Internal variables:
+        pendingAgents (list[Agent]): Array stating all the agents that have not made a succesful interaction yet
+        completedAgents (list[Agent]): Array with all the agents that have already been succesful on the day
+        dayId (int): Number to identify the day
+        rounds (list[Round]): Array with the round happening on this day
+
+    """
+
+    def __init__(self, agents: list[Agent], dayId: int, maxRounds: int = None) -> None:
+        self.pendingAgents = agents
+        self.completedAgents = []
+
         self.dayId = dayId
+        self.maxRounds = maxRounds
 
-    def run(self):
-        # TODO: implement run
-        for day in range(self.dayId):
-            print(f"It's a new day!. Iteration {day}")
-            activeAgents = [agent for agent in self.agents if not agent.discarded]
-            roundNum = 0
-            concurringBuyers = [
-                agent
-                for agent in activeAgents
-                if not agent.success and agent.type == BUYER
-            ]
-            concurringSellers = [
-                agent
-                for agent in activeAgents
-                if not agent.success and agent.type == SELLER
-            ]
-            while roundNum < MAX_ROUND and concurringSellers and concurringBuyers:
-                Round(
-                    buyers=concurringBuyers,
-                    sellers=concurringSellers,
-                    matchingStrategy=RANDOM,
-                )
-                roundNum += 1
+        self.rounds = []
 
-    def getStats(self):
+    def run(self) -> None:
+        while not self.__dayEnded():
+            # The day has not ended so we create a new round
+            currentRound = Round(self.pendingAgents)
+
+            for i in self.pendingAgents:
+                if i.success:
+                    self.pendingAgents.remove(i)
+                    self.completedAgents.append(i)
+
+            # Another condition to stop the simulation if the number of rounds exceed the maxRounds
+            if currentRound.roundCount > self.maxRounds:
+                break
+
+    def getStats(self) -> None:
+        # TODO: How should we do this?
+
         pass
+
+    def __dayEnded(self) -> bool:
+        if not self.pendingAgents:
+            return False
+        else:
+            return True
