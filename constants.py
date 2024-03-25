@@ -5,8 +5,10 @@ BOTH = 2
 # Agent strategy
 STUBBORN = 0
 NEGOTIATE = 1
-# Maatching strategy
+# Matching strategy
 RANDOM = 0
+# Round constants
+MAX_ROUND = 10
 # Exponential smoothing
 ALPHA = 0.02
 

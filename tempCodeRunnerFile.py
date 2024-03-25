@@ -1,0 +1,1 @@
+Agent(SELLER, STUBBORN, 30, 60)
