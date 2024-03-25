@@ -64,3 +64,17 @@ class Agent:
                 self.lastAgreedPrice - self.goalPrice
             )
             self.goalPrice = min(goalPrice, self.priceLimit)
+
+    def paramUpdate(
+        self,
+        priceLimit: float,
+        currentPrice: float,
+    ) -> None:
+        """
+        Update the prices of the Agent
+        ### Args:
+        - priceLimit (float): The max (buyer) or min (seller) price the agent is willing to acccept
+        - initialPrice (float): The current value for goalPrice
+        """
+        self.priceLimit = priceLimit
+        self.goalPrice = currentPrice
