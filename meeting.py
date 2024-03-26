@@ -116,7 +116,7 @@ class Meeting:
                     if buyerPrice == buyer.priceLimit:
                         break
 
-                    buyerPrice = max(buyerPrice * (1 + random()), buyer.priceLimit)
+                    buyerPrice = min(buyerPrice * (1 + random()), buyer.priceLimit)
                     fatigue += abs(buyerPrice - sellerPrice) * random()
             print(UNSUCCESSFUL_MEETING_STR)
             return

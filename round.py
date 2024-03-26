@@ -5,14 +5,15 @@ from random import choice
 class Round:
     def __init__(
         self,
-        agents: list[Agent] = None,
+        agents: list[Agent],
         matchingStrategy: int = RANDOM,
+        currentRound: int = None,
     ) -> None:
         self.buyers = [i for i in agents if i.type == BUYER]
         self.sellers = [i for i in agents if i.type == SELLER]
         self.roundCount = 1
-        self.__runRound(matchingStrategy)
         self.matchedPairs = set()
+        self.__runRound(matchingStrategy)
 
     def __runRound(self, matchingStrategy):
         for i in range(min(len(self.buyers), len(self.sellers))):
@@ -45,5 +46,3 @@ class Round:
 
             if seller.success:
                 self.sellers.remove(seller)
-
-        self.roundCount += 1

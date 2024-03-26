@@ -18,7 +18,9 @@ class Day:
 
     """
 
-    def __init__(self, agents: list[Agent], dayId: int, maxRounds: int = None) -> None:
+    def __init__(
+        self, agents: list[Agent], dayId: int, maxRounds: int = MAX_ROUND_DEFAULT
+    ) -> None:
         self.pendingAgents = agents
         self.completedAgents = []
 
@@ -28,26 +30,25 @@ class Day:
         self.rounds = []
 
     def run(self) -> None:
-        while not self.__dayEnded():
+        roundCount = 0
+        while not self.__dayEnded() and roundCount < self.maxRounds:
             # The day has not ended so we create a new round
-            currentRound = Round(self.pendingAgents)
+            currentRound = Round(self.pendingAgents, RANDOM, roundCount)
 
-            for i in self.pendingAgents:
-                if i.success:
-                    self.pendingAgents.remove(i)
-                    self.completedAgents.append(i)
+            self.pendingAgents = [
+                agent for agent in self.pendingAgents if not agent.success
+            ]
+            self.successfulAgents = [
+                agent for agent in self.pendingAgents if agent.success
+            ]
 
-            # Another condition to stop the simulation if the number of rounds exceed the maxRounds
-            if currentRound.roundCount > self.maxRounds:
-                break
+            roundCount += 1
 
     def getStats(self) -> None:
         # TODO: How should we do this?
 
         pass
 
+    # Do we wanna keep this function or just put the variable itself?
     def __dayEnded(self) -> bool:
-        if not self.pendingAgents:
-            return False
-        else:
-            return True
+        return False if self.pendingAgents else True
