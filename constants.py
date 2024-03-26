@@ -8,7 +8,7 @@ NEGOTIATE = 1
 # Matching strategy
 RANDOM = 0
 # Iteration constants
-MAX_ROUND_DEFAULT = 5
+MAX_ROUND_DEFAULT = 10
 # Exponential smoothing
 ALPHA = 0.02
 
