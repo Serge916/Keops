@@ -29,8 +29,9 @@ class MarketSimulator:
         numBuyers: int = 0,
         numSellers: int = 0,
     ) -> None:
+        numAgents = len(agents) if agents is not None else numBuyers + numSellers
         log.debug(
-            f"Creating class MarketSimulator with the following arguments numdays: {numDays}, agents: {agents}, defaultStrategy: {defaultStrategy}, numBuyers: {numBuyers}, numSellers: {numSellers}"
+            f"Creating class MarketSimulator with the following arguments numdays: {numDays}, numAgents: {numAgents}, defaultStrategy: {defaultStrategy}, numBuyers: {numBuyers}, numSellers: {numSellers}"
         )
 
         self.numDays = numDays
@@ -57,17 +58,15 @@ class MarketSimulator:
         if days is None:
             days = self.numDays
 
-        log.debug(
+        log.info(
             f"Starting a simulation of {days} days. Which will generate the days from {self.daysSimulated+1} to {self.daysSimulated+days}"
         )
 
         for iteratedDay in range(days):
             log.debug(
-                f"Iteration Day: {iteratedDay}. Global day is: {self.daysSimulated+iteratedDay+1}"
+                f"Iteration Day: {iteratedDay}. Global day is: {self.daysSimulated+1}"
             )
-            currentDay = Day(self.agents, self.daysSimulated + iteratedDay)
-
-            currentDay.run()
+            currentDay = Day(self.agents, self.daysSimulated + 1)
 
             log.debug("End of day, obtaining stats and appending the day")
             currentDay.getStats()
