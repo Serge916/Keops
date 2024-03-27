@@ -66,6 +66,8 @@ class Agent:
             )
             self.goalPrice = min(goalPrice, self.priceLimit)
 
+        self.success = False
+
     def paramUpdate(
         self,
         priceLimit: float,

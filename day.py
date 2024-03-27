@@ -22,7 +22,7 @@ class Day:
         self, agents: list[Agent], dayId: int, maxRounds: int = MAX_ROUND_DEFAULT
     ) -> None:
         self.pendingAgents = agents
-        self.completedAgents = []
+        self.agents = agents
 
         self.dayId = dayId
         self.maxRounds = maxRounds
@@ -31,24 +31,25 @@ class Day:
 
     def run(self) -> None:
         roundCount = 0
-        while not self.__dayEnded() and roundCount < self.maxRounds:
+        while not self.__dayEnded(roundCount):
             # The day has not ended so we create a new round
             currentRound = Round(self.pendingAgents, RANDOM, roundCount)
 
             self.pendingAgents = [
                 agent for agent in self.pendingAgents if not agent.success
             ]
-            self.successfulAgents = [
-                agent for agent in self.pendingAgents if agent.success
-            ]
-
             roundCount += 1
+
+        for agent in self.agents:
+            agent.reflection()
 
     def getStats(self) -> None:
         # TODO: How should we do this?
 
         pass
 
-    # Do we wanna keep this function or just put the variable itself?
-    def __dayEnded(self) -> bool:
-        return False if self.pendingAgents else True
+    def __dayEnded(self, roundCount) -> bool:
+        if self.pendingAgents and roundCount < self.maxRounds:
+            return False
+        else:
+            return True

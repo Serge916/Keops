@@ -7,6 +7,7 @@ STUBBORN = 0
 NEGOTIATE = 1
 # Matching strategy
 RANDOM = 0
+CHEAPEST_SELLERS_FIRST = 1
 # Iteration constants
 MAX_ROUND_DEFAULT = 10
 # Exponential smoothing
