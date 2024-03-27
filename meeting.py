@@ -1,8 +1,13 @@
+import pickle4 as pickle
+import logging
+
 from agents import *
 from random import random, randrange
 
 SUCCESSFUL_MEETING_STR = "Agents agreed on a price!"
 UNSUCCESSFUL_MEETING_STR = "Agents couldn't agree on a price"
+
+log = logging.getLogger(__name__)
 
 
 class Meeting:
@@ -39,12 +44,7 @@ class Meeting:
             while fatigue < fedUp:
                 tracer += 1
                 if buyerPrice >= sellerPrice:
-                    print(SUCCESSFUL_MEETING_STR)
-                    print(f"Negotiations: {tracer}")
-                    seller.success = True
-                    buyer.success = True
-                    buyer.lastAgreedPrice = sellerPrice
-                    seller.lastAgreedPrice = sellerPrice
+                    self.__successfulMeeting(buyer, seller, sellerPrice, tracer)
                     return
                 else:
                     if (
@@ -56,20 +56,16 @@ class Meeting:
                     buyerPrice = min(buyerPrice * (1 + random()), buyer.priceLimit)
                     sellerPrice = max(sellerPrice * (1 - random()), seller.priceLimit)
                     fatigue += abs(buyerPrice - sellerPrice) * random()
-            print(UNSUCCESSFUL_MEETING_STR)
+            self.__unsuccessfulMeeting(buyer, seller, tracer)
             return
 
         if buyer.strategy == STUBBORN and seller.strategy == STUBBORN:
             sellerPrice = seller.goalPrice
             if buyer.priceLimit >= seller.goalPrice:
-                print(SUCCESSFUL_MEETING_STR)
-                seller.success = True
-                buyer.success = True
-                seller.lastAgreedPrice = sellerPrice
-                buyer.lastAgreedPrice = sellerPrice
+                self.__successfulMeeting(buyer, seller, sellerPrice, 1)
                 return
 
-            print(UNSUCCESSFUL_MEETING_STR)
+            self.__unsuccessfulMeeting(buyer, seller, 1)
 
         if buyer.strategy == STUBBORN and seller.strategy == NEGOTIATE:
             fatigue = 0
@@ -80,12 +76,7 @@ class Meeting:
             while fatigue < fedUp:
                 tracer += 1
                 if buyerPrice >= sellerPrice:
-                    print(SUCCESSFUL_MEETING_STR)
-                    print(f"Negotiations: {tracer}")
-                    seller.success = True
-                    buyer.success = True
-                    seller.lastAgreedPrice = sellerPrice
-                    buyer.lastAgreedPrice = sellerPrice
+                    self.__successfulMeeting(buyer, seller, sellerPrice, tracer)
                     return
                 else:
                     if sellerPrice == seller.priceLimit:
@@ -93,7 +84,7 @@ class Meeting:
 
                     sellerPrice = max(sellerPrice * (1 - random()), seller.priceLimit)
                     fatigue += abs(buyerPrice - sellerPrice) * random()
-            print(UNSUCCESSFUL_MEETING_STR)
+            self.__unsuccessfulMeeting(buyer, seller, tracer)
             return
 
         if buyer.strategy == NEGOTIATE and seller.strategy == STUBBORN:
@@ -105,12 +96,7 @@ class Meeting:
             while fatigue < fedUp:
                 tracer += 1
                 if buyerPrice >= sellerPrice:
-                    print(SUCCESSFUL_MEETING_STR)
-                    print(f"Negotiations: {tracer}")
-                    seller.success = True
-                    buyer.success = True
-                    seller.lastAgreedPrice = sellerPrice
-                    buyer.lastAgreedPrice = sellerPrice
+                    self.__successfulMeeting(buyer, seller, sellerPrice, tracer)
                     return
                 else:
                     if buyerPrice == buyer.priceLimit:
@@ -118,5 +104,21 @@ class Meeting:
 
                     buyerPrice = min(buyerPrice * (1 + random()), buyer.priceLimit)
                     fatigue += abs(buyerPrice - sellerPrice) * random()
-            print(UNSUCCESSFUL_MEETING_STR)
+            self.__unsuccessfulMeeting(buyer, seller, tracer)
             return
+
+    def __successfulMeeting(
+        self, buyer: Agent, seller: Agent, sellingPrice: int, negotiations: int
+    ):
+        log.info(
+            f"Buyer ({buyer.agentID}) and Seller ({seller.agentID}) agreed on a price of {sellingPrice} after {negotiations} negotiations."
+        )
+        seller.success = True
+        buyer.success = True
+        buyer.lastAgreedPrice = sellingPrice
+        seller.lastAgreedPrice = sellingPrice
+
+    def __unsuccessfulMeeting(self, buyer: Agent, seller: Agent, negotiations: int):
+        log.info(
+            f"Buyer ({buyer.agentID}) and Seller ({seller.agentID}) couldn't agree on a price after {negotiations} negotiations."
+        )

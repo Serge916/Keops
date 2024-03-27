@@ -1,7 +1,11 @@
+import logging
+
 from constants import *
 
+log = logging.getLogger(__name__)
 
 class Agent:
+    classIdCounter = 0
     """Creates a market agent
     ### Args:
         - type (int): The type of the agent: BUYER/SELLER
@@ -32,6 +36,9 @@ class Agent:
             raise ValueError(
                 "Seller cannot have an initial price lower than the price limit."
             )
+        self.agentID = f"{"S" if agentType == SELLER else "B"}{Agent.classIdCounter}"
+        Agent.classIdCounter += 1
+
         self.type = agentType
         self.strategy = strategy
         self.priceLimit = priceLimit
@@ -41,6 +48,8 @@ class Agent:
         self.attended = False
         self.discarded = False
         self.success = False
+
+        log.info(f"Created Agent ({self.agentID}) with Price Limit {self.priceLimit} and Goal Price {self.goalPrice}")
 
     def reflection(self) -> None:
         """Agent reflects on the last round, i.e. it changes the goal price accordingly."""
@@ -56,17 +65,18 @@ class Agent:
             self.streak = lastPoint
 
         if self.type == BUYER:
-            goalPrice = (1 - ALPHA) * self.goalPrice + ALPHA * abs(self.streak) * (
-                self.lastAgreedPrice - self.goalPrice
-            )
-            self.goalPrice = max(goalPrice, self.priceLimit)
-        else:
-            goalPrice = (1 - ALPHA) * self.goalPrice + ALPHA * abs(self.streak) * (
+            goalPrice = self.goalPrice + ALPHA * self.streak * (
                 self.lastAgreedPrice - self.goalPrice
             )
             self.goalPrice = min(goalPrice, self.priceLimit)
+        else:
+            goalPrice = self.goalPrice + ALPHA * abs(self.streak) * (
+                self.lastAgreedPrice - self.goalPrice
+            )
+            self.goalPrice = max(goalPrice, self.priceLimit)
 
         self.success = False
+        log.info(f"Agent ({self.agentID}) reflected on the last round, current Goal Price {self.goalPrice}")
 
     def paramUpdate(
         self,
@@ -81,3 +91,5 @@ class Agent:
         """
         self.priceLimit = priceLimit
         self.goalPrice = currentPrice
+        
+        log.info(f"Agent ({self.agentID}) had its parameters externally modified, current Price Limit {self.priceLimit} and Goal Price {self.goalPrice}")

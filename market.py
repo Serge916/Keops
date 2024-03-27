@@ -1,6 +1,7 @@
 import logging
 from random import random, randrange
 import time
+import pickle4 as pickle
 
 from agents import *
 from day import *
@@ -108,21 +109,3 @@ def generateAgents(
         agents.append(Agent(SELLER, strategy, priceLimit, initialPrice))
 
     return agents
-
-
-# TODO: Review!
-"""groupBuyers = [Agent(BUYER, WALKBY, 9, 7)]
-groupSellers = [Agent(SELLER, WALKBY, 6, 6)]
-
-for day in range(DAYS):
-    for round in range(min(len(groupBuyers), len(groupSellers))):
-        buyer = random.choice(groupBuyers)
-        while buyer.attended == True:
-            buyer = random.choice(groupBuyers)
-
-        seller = random.choice(groupSellers)
-        while seller.attended == True:
-            seller = random.choice(groupSellers)
-
-        runDay(buyer, seller)
-"""
