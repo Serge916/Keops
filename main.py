@@ -4,6 +4,7 @@ from datetime import datetime
 from market import *
 
 log = logging.getLogger(__name__)
+statsFolder = "output/"
 
 logging.basicConfig(
     filename="simulator.log",
@@ -16,9 +17,12 @@ if __name__ == "__main__":
     log.info(START_MSG.format(datetime.now()))
 
     sim = MarketSimulator(
-        numDays=30, defaultStrategy=NEGOTIATE, numBuyers=1, numSellers=1
+        numDays=30, defaultStrategy=NEGOTIATE, numBuyers=3, numSellers=4
     )
 
     sim.simulate()
 
     log.info(END_MSG.format(sim.simExecutionTime))
+    Agent.classStatsDf.to_pickle(f"{statsFolder}agent.pkl")
+    Meeting.classStatsDf.to_pickle(f"{statsFolder}meeting.pkl")
+    Round.classStatsDf.to_pickle(f"{statsFolder}round.pkl")

@@ -19,7 +19,10 @@ class Day:
     """
 
     def __init__(
-        self, agents: list[Agent], dayId: int, maxRounds: int = MAX_ROUND_DEFAULT
+        self,
+        agents: list[Agent],
+        dayId: int,
+        maxRounds: int = MAX_ROUND_DEFAULT,
     ) -> None:
         self.pendingAgents = agents
         self.agents = agents
@@ -33,7 +36,13 @@ class Day:
         roundCount = 0
         while not self.__dayEnded(roundCount):
             # The day has not ended so we create a new round
-            currentRound = Round(self.pendingAgents, RANDOM, roundCount)
+            Round(
+                self.pendingAgents,
+                RANDOM,
+                roundInDay=roundCount,
+                day=self.dayId,
+            )
+            log.debug(f"Current day is {self.dayId}")
 
             self.pendingAgents = [
                 agent for agent in self.pendingAgents if not agent.success
@@ -44,9 +53,8 @@ class Day:
             agent.reflection()
 
     def getStats(self) -> None:
-        # TODO: How should we do this?
-
-        pass
+        for agent in self.agents:
+            agent.getStats(self.dayId)
 
     def __dayEnded(self, roundCount) -> bool:
         if self.pendingAgents and roundCount < self.maxRounds:

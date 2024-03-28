@@ -1,8 +1,9 @@
 import numpy as np
 from random import random, randrange
 
-from constants import *
 from agents import *
+
+log = logging.getLogger(__name__)
 
 
 class AgentGenerator:

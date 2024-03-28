@@ -1,5 +1,3 @@
-import logging
-import numpy as np
 import time
 import pickle4 as pickle
 
@@ -72,11 +70,11 @@ class MarketSimulator:
             log.debug(
                 f"Iteration Day: {iteratedDay}. Global day is: {self.daysSimulated+iteratedDay+1}"
             )
-            currentDay = Day(self.agents, self.daysSimulated + iteratedDay)
+            currentDay = Day(self.agents, self.daysSimulated)
 
             currentDay.run()
-
             log.debug("End of day, obtaining stats and appending the day")
+
             currentDay.getStats()
             self.daysSimulated += 1
             self.days.append(currentDay)

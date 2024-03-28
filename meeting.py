@@ -11,6 +11,18 @@ log = logging.getLogger(__name__)
 
 
 class Meeting:
+    classIdCounter = 0
+    classStatsDf = pd.DataFrame()
+    classStatsDf["day"] = pd.Series(dtype=int)
+    classStatsDf["roundID"] = pd.Series(dtype=int)
+    classStatsDf["meetingID"] = pd.Series(dtype=int)
+    classStatsDf["buyerID"] = pd.Series(dtype=str)
+    classStatsDf["sellerID"] = pd.Series(dtype=str)
+    classStatsDf["success"] = pd.Series(dtype=bool)
+    classStatsDf["strategy"] = pd.Series(dtype=str)
+    classStatsDf["sellingPrice"] = pd.Series(dtype=float)
+    classStatsDf["negotiations"] = pd.Series(dtype=int)
+
     """
     Agents interact based on their strategy. The Seller is the one offering the price and the Buyer agrees or rejects.
     ### Args:
@@ -18,9 +30,12 @@ class Meeting:
         seller (Agent): The Agent that offers the item
     """
 
-    def __init__(self, buyer: Agent, seller: Agent) -> None:
+    def __init__(self, buyer: Agent, seller: Agent, roundID: int, day: int) -> None:
+        Meeting.classIdCounter += 1
         seller.attended = True
         buyer.attended = True
+        self.roundId = roundID
+        self.day = day
         self.__interact(buyer, seller)
 
     def __interact(self, buyer: Agent, seller: Agent) -> None:
@@ -118,7 +133,40 @@ class Meeting:
         buyer.lastAgreedPrice = sellingPrice
         seller.lastAgreedPrice = sellingPrice
 
+        df = pd.DataFrame(
+            [
+                {
+                    "day": self.day,
+                    "roundID": self.roundId,
+                    "buyerID": buyer.agentID,
+                    "sellerID": seller.agentID,
+                    "success": True,
+                    "sellingPrice": sellingPrice,
+                    "strategy": f"S{seller.strategy}B{buyer.strategy}",
+                    "negotiations": negotiations,
+                    "meetingID": Meeting.classIdCounter,
+                }
+            ]
+        )
+        Meeting.classStatsDf = pd.concat([Meeting.classStatsDf, df], ignore_index=True)
+
     def __unsuccessfulMeeting(self, buyer: Agent, seller: Agent, negotiations: int):
         log.info(
             f"Buyer ({buyer.agentID}) and Seller ({seller.agentID}) couldn't agree on a price after {negotiations} negotiations."
         )
+        df = pd.DataFrame(
+            [
+                {
+                    "day": self.day,
+                    "roundID": self.roundId,
+                    "buyerID": buyer.agentID,
+                    "sellerID": seller.agentID,
+                    "success": False,
+                    "sellingPrice": 0,
+                    "strategy": f"S{seller.strategy}B{buyer.strategy}",
+                    "negotiations": negotiations,
+                    "meetingID": Meeting.classIdCounter,
+                }
+            ]
+        )
+        Meeting.classStatsDf = pd.concat([Meeting.classStatsDf, df], ignore_index=True)
