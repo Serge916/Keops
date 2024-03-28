@@ -1,10 +1,11 @@
 import logging
-from random import random, randrange
+import numpy as np
 import time
 import pickle4 as pickle
 
 from agents import *
 from day import *
+from generator import *
 
 log = logging.getLogger(__name__)
 
@@ -38,7 +39,12 @@ class MarketSimulator:
 
         if agents is None:
             log.debug("No agents provided so creating new ones.")
-            self.agents = generateAgents(numBuyers, numSellers, defaultStrategy)
+            # self.agents = AgentGenerator.generateAgentsGaussian(
+            #     numBuyers, numSellers, defaultStrategy
+            # )
+            self.agents = AgentGenerator.generateAgentsBeta(
+                numBuyers, numSellers, defaultStrategy
+            )
         else:
             self.agents = agents
 
@@ -78,34 +84,3 @@ class MarketSimulator:
         # End of the simulation. Get the timestamp to added the simulation time to the class
         t1 = time.time()
         self.simExecutionTime += t1 - t0
-
-
-def generateAgents(
-    numBuyers: int = 0, numSellers: int = 0, strategy: int = STUBBORN
-) -> list[Agent]:
-    """Generate a given number of buyers and sellers. Returns a list of agents"""
-    agents = []
-
-    log.debug(
-        f"Generating {numBuyers} buyers and {numSellers} sellers with strategy {strategy}"
-    )
-
-    for _ in range(numBuyers):
-        # TODO: review how to randomly generate price limits This is a mock up for the moment!
-        priceLimit = randrange(50, 100)
-        try:
-            initialPrice = randrange(50, priceLimit)
-        except ValueError:
-            initialPrice = priceLimit
-        agents.append(Agent(BUYER, strategy, priceLimit, initialPrice))
-
-    for j in range(numSellers):
-        # TODO: review how to randomly generate price limits
-        priceLimit = randrange(50, 100)
-        try:
-            initialPrice = randrange(priceLimit, 100)
-        except ValueError:
-            initialPrice = priceLimit
-        agents.append(Agent(SELLER, strategy, priceLimit, initialPrice))
-
-    return agents
