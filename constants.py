@@ -32,3 +32,7 @@ END_MSG = """/************************ End of simulation! **********************
 """
 # Simulation parameters
 DAYS = 3
+BETA_DIST_MAX_VAL = 100
+BETA_DIST_MIN_VAL = 30
+BETA_DIST_ALPHA = 0.2
+BETA_DIST_BETA = 0.4

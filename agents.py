@@ -1,4 +1,7 @@
 import logging
+import numpy as np
+import pandas as pd
+import pickle4 as pickle
 
 from constants import *
 
@@ -6,6 +9,16 @@ log = logging.getLogger(__name__)
 
 class Agent:
     classIdCounter = 0
+    classStatsDf = pd.DataFrame()
+    classStatsDf["day"] = pd.Series(dtype=int)
+    classStatsDf["agentID"] = pd.Series(dtype=str)
+    classStatsDf["agentType"] = pd.Series(dtype=int)
+    classStatsDf["goalPrice"] = pd.Series(dtype=float)
+    classStatsDf["strategy"] = pd.Series(dtype=int)
+    classStatsDf["priceLimit"] = pd.Series(dtype=float)
+    classStatsDf["streak"] = pd.Series(dtype=int)
+    classStatsDf["discarded"] = pd.Series(dtype=bool)
+
     """Creates a market agent
     ### Args:
         - type (int): The type of the agent: BUYER/SELLER
@@ -27,6 +40,7 @@ class Agent:
         strategy: int = STUBBORN,
         priceLimit: float = None,
         initialPrice: float = None,
+        day: int = 0
     ) -> None:
         if agentType == BUYER and initialPrice > priceLimit:
             raise ValueError(
@@ -50,6 +64,7 @@ class Agent:
         self.success = False
 
         log.info(f"Created Agent ({self.agentID}) with Price Limit {self.priceLimit} and Goal Price {self.goalPrice}")
+        self.getStats(day)
 
     def reflection(self) -> None:
         """Agent reflects on the last round, i.e. it changes the goal price accordingly."""
@@ -93,3 +108,7 @@ class Agent:
         self.goalPrice = currentPrice
         
         log.info(f"Agent ({self.agentID}) had its parameters externally modified, current Price Limit {self.priceLimit} and Goal Price {self.goalPrice}")
+
+    def getStats(self, day):
+        df = pd.DataFrame([{"day":day, "agentID":self.agentID, "agentType":self.type, "goalPrice":self.goalPrice, "strategy":self.strategy, "priceLimit":self.priceLimit, "streak":self.streak, "discarded":self.discarded}])
+        Agent.classStatsDf = pd.concat([Agent.classStatsDf, df], ignore_index=True)

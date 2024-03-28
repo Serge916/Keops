@@ -8,12 +8,19 @@ log = logging.getLogger(__name__)
 
 class Round:
     classIdCounter = 0
+    classStatsDf = pd.DataFrame()
+    classStatsDf["day"] = pd.Series(dtype=int)
+    classStatsDf["roundID"] = pd.Series(dtype=int)
+    classStatsDf["roundOfDay"] = pd.Series(dtype=int)
+    classStatsDf["matchingStrat"] = pd.Series(dtype=int)
 
     def __init__(
         self,
         agents: list[Agent],
         roundOfDay: int,
         matchingStrategy: int = RANDOM,
+        roundInDay: int = 0,
+        day: int = 0,
     ) -> None:
         log.debug(
             f"Creating class Round with the following arguments numAgents: {len(agents)}, roundOfDay: {roundOfDay}, mathchingStrategy: {matchingStrategy}"
@@ -23,13 +30,16 @@ class Round:
         Round.classIdCounter += 1
         self.buyers = [i for i in agents if i.type == BUYER]
         self.sellers = [i for i in agents if i.type == SELLER]
-        self.roundOfDay = roundOfDay
+        self.roundInDay = roundInDay
+        self.day = day
         self.matchedPairs = set()
         self.numMeetings = min(len(self.buyers), len(self.sellers))
         log.info(
             f"In total there are {self.buyers} buyers and {self.sellers}. So total number of meetings: {self.numMeetings}"
         )
         self.__runRound(matchingStrategy)
+        self.__getStats(matchingStrategy)
+        Round.classIdCounter += 1
 
     def __runRound(self, matchingStrategy):
         log.info(f"----- Start Round: {self.roundOfDay}. ID: {self.roundId}")
@@ -56,9 +66,7 @@ class Round:
                     # Break if no available buyers and sellers
                     break
 
-            log.debug(f"Buyer selected: {buyer}. Seller selected {seller}")
-
-            Meeting(buyer, seller)
+            Meeting(buyer, seller, roundID=Round.classIdCounter, day=self.day)
             self.matchedPairs.add(buyer)
             self.matchedPairs.add(seller)
 
@@ -68,4 +76,15 @@ class Round:
             if seller.success:
                 self.sellers.remove(seller)
 
-        log.info(f"----- End Round: {self.roundOfDay}\n")
+    def __getStats(self, matchingStrat):
+        df = pd.DataFrame(
+            [
+                {
+                    "day": self.day,
+                    "roundID": Round.classIdCounter,
+                    "roundOfDay": self.roundInDay,
+                    "matchingStrat": matchingStrat,
+                }
+            ]
+        )
+        Round.classStatsDf = pd.concat([Round.classStatsDf, df], ignore_index=True)

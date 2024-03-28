@@ -23,7 +23,10 @@ class Day:
     """
 
     def __init__(
-        self, agents: list[Agent], dayId: int, maxRounds: int = MAX_ROUND_DEFAULT
+        self,
+        agents: list[Agent],
+        dayId: int,
+        maxRounds: int = MAX_ROUND_DEFAULT,
     ) -> None:
         log.debug(
             f"Creating class Day with the following arguments dayId: {dayId}, numAgents: {len(agents)}, maxRounds: {maxRounds}"
@@ -50,9 +53,13 @@ class Day:
         while self.pendingAgents and roundCount < self.maxRounds and numMeetings != 0:
             log.debug(f"Iteration Round: {roundCount}. Maximum of {self.maxRounds}")
             # The day has not ended so we create a new round
-            currentRound = Round(self.pendingAgents, roundCount, RANDOM)
-
-            numMeetings = currentRound.numMeetings
+            Round(
+                self.pendingAgents,
+                RANDOM,
+                roundInDay=roundCount,
+                day=self.dayId,
+            )
+            log.debug(f"Current day is {self.dayId}")
 
             self.pendingAgents = [
                 agent for agent in self.pendingAgents if not agent.success
@@ -69,6 +76,12 @@ class Day:
         for agent in self.agents:
             agent.reflection()
 
-        log.info(
-            f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\END OF DAY: {self.dayId}//////////////////////////\n"
-        )
+    def getStats(self) -> None:
+        for agent in self.agents:
+            agent.getStats(self.dayId)
+
+    def __dayEnded(self, roundCount) -> bool:
+        if self.pendingAgents and roundCount < self.maxRounds:
+            return False
+        else:
+            return True
